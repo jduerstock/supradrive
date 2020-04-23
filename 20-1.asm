@@ -10,33 +10,36 @@
 
 ; ----------------------------------------------------------------------------
 L0000           := $0000
-L0080           := $0080
+
+DUNIT		:= $0301
+DBUF		:= $0304
+DBYT		:= $0308
+HW0		:= $D100
+
 ; ----------------------------------------------------------------------------
         jmp     LDA6A                           ; D800 4C 6A DA                 Lj.
 
 ; ----------------------------------------------------------------------------
         .byte   $80                             ; D803 80                       .
-        cli                                     ; D804 58                       X
-        jmp     LDA76                           ; D805 4C 76 DA                 Lv.
+	.byte	$58
+
+        jmp     LDA76                           ; i/o vector
 
 ; ----------------------------------------------------------------------------
-        jmp     LDA69                           ; D808 4C 69 DA                 Li.
+        jmp     LDA69                           ; interrupt vector
 
 ; ----------------------------------------------------------------------------
-        sta     ($77),y                         ; D80B 91 77                    .w
-        pla                                     ; D80D 68                       h
-        .byte   $DA                             ; D80E DA                       .
-        pla                                     ; D80F 68                       h
-        .byte   $DA                             ; D810 DA                       .
-        pla                                     ; D811 68                       h
-        .byte   $DA                             ; D812 DA                       .
-        pla                                     ; D813 68                       h
-        .byte   $DA                             ; D814 DA                       .
-        pla                                     ; D815 68                       h
-        .byte   $DA                             ; D816 DA                       .
-        pla                                     ; D817 68                       h
-        .byte   $DA                             ; D818 DA                       .
-        jmp     LD9D3                           ; D819 4C D3 D9                 L..
+	.byte	$91
+	.byte	$77
+
+	.addr	LDA69-1
+	.addr	LDA69-1
+	.addr	LDA69-1
+	.addr	LDA69-1
+	.addr	LDA69-1
+	.addr	LDA69-1
+
+        jmp     LD9D3                           ; init vector
 
 ; ----------------------------------------------------------------------------
         brk                                     ; D81C 00                       .
@@ -148,204 +151,34 @@ LD81D:  brk                                     ; D81D 00                       
         .byte   $0B                             ; D89A 0B                       .
         brk                                     ; D89B 00                       .
         brk                                     ; D89C 00                       .
-LD89D:  brk                                     ; D89D 00                       .
-        jsr     L0000                           ; D89E 20 00 00                  ..
-        ora     (L0000,x)                       ; D8A1 01 00                    ..
-LD8A3:  ora     ($03,x)                         ; D8A3 01 03                    ..
-        pha                                     ; D8A5 48                       H
-        bvs     LD8A8                           ; D8A6 70 00                    p.
-LD8A8:  .byte   $04                             ; D8A8 04                       .
-        ora     (L0000,x)                       ; D8A9 01 00                    ..
-        rti                                     ; D8AB 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D8AC 00                       .
-        brk                                     ; D8AD 00                       .
-        brk                                     ; D8AE 00                       .
-        brk                                     ; D8AF 00                       .
-        brk                                     ; D8B0 00                       .
-        brk                                     ; D8B1 00                       .
-        brk                                     ; D8B2 00                       .
-        ora     ($03,x)                         ; D8B3 01 03                    ..
-        pha                                     ; D8B5 48                       H
-        bvs     LD8B8                           ; D8B6 70 00                    p.
-LD8B8:  .byte   $04                             ; D8B8 04                       .
-        ora     (L0000,x)                       ; D8B9 01 00                    ..
-        rti                                     ; D8BB 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D8BC 00                       .
-        brk                                     ; D8BD 00                       .
-        brk                                     ; D8BE 00                       .
-        brk                                     ; D8BF 00                       .
-        brk                                     ; D8C0 00                       .
-        brk                                     ; D8C1 00                       .
-        brk                                     ; D8C2 00                       .
-        ora     ($03,x)                         ; D8C3 01 03                    ..
-        sty     $F0,x                           ; D8C5 94 F0                    ..
-        brk                                     ; D8C7 00                       .
-        .byte   $04                             ; D8C8 04                       .
-        ora     (L0000,x)                       ; D8C9 01 00                    ..
-        rti                                     ; D8CB 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D8CC 00                       .
-        brk                                     ; D8CD 00                       .
-        brk                                     ; D8CE 00                       .
-        brk                                     ; D8CF 00                       .
-        brk                                     ; D8D0 00                       .
-        brk                                     ; D8D1 00                       .
-        brk                                     ; D8D2 00                       .
-        ora     ($03,x)                         ; D8D3 01 03                    ..
-        tay                                     ; D8D5 A8                       .
-        bvs     LD8D8                           ; D8D6 70 00                    p.
-LD8D8:  .byte   $04                             ; D8D8 04                       .
-        ora     (L0000,x)                       ; D8D9 01 00                    ..
-        rti                                     ; D8DB 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D8DC 00                       .
-        brk                                     ; D8DD 00                       .
-        brk                                     ; D8DE 00                       .
-        brk                                     ; D8DF 00                       .
-        brk                                     ; D8E0 00                       .
-        brk                                     ; D8E1 00                       .
-        brk                                     ; D8E2 00                       .
-        ora     ($03,x)                         ; D8E3 01 03                    ..
-        sbc     ($70,x)                         ; D8E5 E1 70                    .p
-        brk                                     ; D8E7 00                       .
-        .byte   $04                             ; D8E8 04                       .
-        ora     (L0000,x)                       ; D8E9 01 00                    ..
-        rti                                     ; D8EB 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D8EC 00                       .
-        brk                                     ; D8ED 00                       .
-        brk                                     ; D8EE 00                       .
-        brk                                     ; D8EF 00                       .
-        brk                                     ; D8F0 00                       .
-        brk                                     ; D8F1 00                       .
-        brk                                     ; D8F2 00                       .
-        ora     ($03,x)                         ; D8F3 01 03                    ..
-        sty     $F0,x                           ; D8F5 94 F0                    ..
-        brk                                     ; D8F7 00                       .
-        .byte   $04                             ; D8F8 04                       .
-        ora     (L0000,x)                       ; D8F9 01 00                    ..
-        rti                                     ; D8FB 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D8FC 00                       .
-        brk                                     ; D8FD 00                       .
-        brk                                     ; D8FE 00                       .
-        brk                                     ; D8FF 00                       .
-        brk                                     ; D900 00                       .
-        brk                                     ; D901 00                       .
-        brk                                     ; D902 00                       .
-        ora     ($03,x)                         ; D903 01 03                    ..
-        sty     $F0,x                           ; D905 94 F0                    ..
-        brk                                     ; D907 00                       .
-        .byte   $04                             ; D908 04                       .
-        ora     (L0000,x)                       ; D909 01 00                    ..
-        rti                                     ; D90B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D90C 00                       .
-        brk                                     ; D90D 00                       .
-        brk                                     ; D90E 00                       .
-        brk                                     ; D90F 00                       .
-        brk                                     ; D910 00                       .
-        brk                                     ; D911 00                       .
-        brk                                     ; D912 00                       .
-        ora     ($03,x)                         ; D913 01 03                    ..
-        sty     $F0,x                           ; D915 94 F0                    ..
-        brk                                     ; D917 00                       .
-        .byte   $04                             ; D918 04                       .
-        ora     (L0000,x)                       ; D919 01 00                    ..
-        rti                                     ; D91B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D91C 00                       .
-        brk                                     ; D91D 00                       .
-        brk                                     ; D91E 00                       .
-        brk                                     ; D91F 00                       .
-        brk                                     ; D920 00                       .
-        brk                                     ; D921 00                       .
-        brk                                     ; D922 00                       .
-LD923:  ora     ($03,x)                         ; D923 01 03                    ..
-        jmp     L0080                           ; D925 4C 80 00                 L..
-
-; ----------------------------------------------------------------------------
-        .byte   $04                             ; D928 04                       .
-        ora     (L0000,x)                       ; D929 01 00                    ..
-        rti                                     ; D92B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D92C 00                       .
-        brk                                     ; D92D 00                       .
-        brk                                     ; D92E 00                       .
-        brk                                     ; D92F 00                       .
-        brk                                     ; D930 00                       .
-        brk                                     ; D931 00                       .
-        brk                                     ; D932 00                       .
-        ora     ($03,x)                         ; D933 01 03                    ..
-        jmp     L0080                           ; D935 4C 80 00                 L..
-
-; ----------------------------------------------------------------------------
-        .byte   $04                             ; D938 04                       .
-        ora     (L0000,x)                       ; D939 01 00                    ..
-        rti                                     ; D93B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D93C 00                       .
-        brk                                     ; D93D 00                       .
-        brk                                     ; D93E 00                       .
-        brk                                     ; D93F 00                       .
-        brk                                     ; D940 00                       .
-        brk                                     ; D941 00                       .
-        brk                                     ; D942 00                       .
-        ora     ($03,x)                         ; D943 01 03                    ..
-        sta     L0000,y                         ; D945 99 00 00                 ...
-        .byte   $04                             ; D948 04                       .
-        ora     (L0000,x)                       ; D949 01 00                    ..
-        rti                                     ; D94B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D94C 00                       .
-        brk                                     ; D94D 00                       .
-        brk                                     ; D94E 00                       .
-        brk                                     ; D94F 00                       .
-        brk                                     ; D950 00                       .
-        brk                                     ; D951 00                       .
-        brk                                     ; D952 00                       .
-        ora     ($03,x)                         ; D953 01 03                    ..
-        ldy     a:L0080                         ; D955 AC 80 00                 ...
-        .byte   $04                             ; D958 04                       .
-        ora     (L0000,x)                       ; D959 01 00                    ..
-        rti                                     ; D95B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D95C 00                       .
-        brk                                     ; D95D 00                       .
-        brk                                     ; D95E 00                       .
-        brk                                     ; D95F 00                       .
-        brk                                     ; D960 00                       .
-        brk                                     ; D961 00                       .
-        brk                                     ; D962 00                       .
-        ora     ($03,x)                         ; D963 01 03                    ..
-        sbc     L0080                           ; D965 E5 80                    ..
-        brk                                     ; D967 00                       .
-        .byte   $04                             ; D968 04                       .
-        ora     (L0000,x)                       ; D969 01 00                    ..
-        rti                                     ; D96B 40                       @
-
-; ----------------------------------------------------------------------------
-        brk                                     ; D96C 00                       .
-        brk                                     ; D96D 00                       .
-        brk                                     ; D96E 00                       .
-        brk                                     ; D96F 00                       .
-        brk                                     ; D970 00                       .
-        brk                                     ; D971 00                       .
-        brk                                     ; D972 00                       .
+LD89D:	.byte	$00,$20,$00,$00,$01
+	.byte	$00
+LD8A3:	.byte	$01,$03,$48,$70,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$48,$70,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$94,$F0,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$A8,$70,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$E1,$70,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$94,$F0,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$94,$F0,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$94,$F0,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+LD923:	.byte	$01,$03,$4C,$80,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$4C,$80,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$99,$00,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$AC,$80,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
+	.byte	$01,$03,$E5,$80,$00,$04,$01,$00,$40,$00,$00,$00
+	.byte	$00,$00,$00,$00
         ora     ($03,x)                         ; D973 01 03                    ..
         sta     L0000,y                         ; D975 99 00 00                 ...
         .byte   $04                             ; D978 04                       .
@@ -441,10 +274,12 @@ LD9A3:  plp                                     ; D9A3 28                       
         brk                                     ; D9D0 00                       .
         brk                                     ; D9D1 00                       .
         brk                                     ; D9D2 00                       .
+
+; ----------------------------------------------------------------------------
 LD9D3:  lda     #$FF                            ; D9D3 A9 FF                    ..
         sta     $D10C                           ; D9D5 8D 0C D1                 ...
         lda     #$FB                            ; D9D8 A9 FB                    ..
-        sta     $D100                           ; D9DA 8D 00 D1                 ...
+        sta     HW0
         lda     #$06                            ; D9DD A9 06                    ..
         sta     $D102                           ; D9DF 8D 02 D1                 ...
         lda     #$00                            ; D9E2 A9 00                    ..
@@ -452,10 +287,10 @@ LD9D3:  lda     #$FF                            ; D9D3 A9 FF                    
         lda     #$7F                            ; D9E7 A9 7F                    ..
         sta     $D10E                           ; D9E9 8D 0E D1                 ...
         lda     #$FF                            ; D9EC A9 FF                    ..
-        sta     $D100                           ; D9EE 8D 00 D1                 ...
+        sta     HW0
         sta     $4A                             ; D9F1 85 4A                    .J
 LD9F3:  ldy     #$FF                            ; D9F3 A0 FF                    ..
-LD9F5:  lda     $D100                           ; D9F5 AD 00 D1                 ...
+LD9F5:  lda     HW0
         and     #$08                            ; D9F8 29 08                    ).
         bne     LDA00                           ; D9FA D0 04                    ..
         dey                                     ; D9FC 88                       .
@@ -523,7 +358,7 @@ LDA69:  rts                                     ; DA69 60                       
 
 ; ----------------------------------------------------------------------------
 LDA6A:  ldx     #$FF                            ; DA6A A2 FF                    ..
-        lda     $0301                           ; DA6C AD 01 03                 ...
+        lda     DUNIT
         lsr     a                               ; DA6F 4A                       J
         bcs     LDAC9                           ; DA70 B0 57                    .W
         ldx     #$00                            ; DA72 A2 00                    ..
@@ -533,7 +368,7 @@ LDA76:  lda     $0300                           ; DA76 AD 00 03                 
         cmp     #$30                            ; DA7B C9 30                    .0
         bne     LDAC5                           ; DA7D D0 46                    .F
         ldx     #$00                            ; DA7F A2 00                    ..
-        ldy     $0301                           ; DA81 AC 01 03                 ...
+        ldy     DUNIT
         cpy     #$03                            ; DA84 C0 03                    ..
         beq     LDA6A                           ; DA86 F0 E2                    ..
         cpy     #$04                            ; DA88 C0 04                    ..
@@ -545,20 +380,20 @@ LDA76:  lda     $0300                           ; DA76 AD 00 03                 
         bne     LDAAA                           ; DA94 D0 14                    ..
         ldx     #$FF                            ; DA96 A2 FF                    ..
         lda     $0302                           ; DA98 AD 02 03                 ...
-        cmp     #$52                            ; DA9B C9 52                    .R
+        cmp     #'R'
         beq     LDAA3                           ; DA9D F0 04                    ..
-        cmp     #$53                            ; DA9F C9 53                    .S
+        cmp     #'S'
         bne     LDABC                           ; DAA1 D0 19                    ..
 LDAA3:  lda     #$03                            ; DAA3 A9 03                    ..
-        sta     $0301                           ; DAA5 8D 01 03                 ...
+        sta     DUNIT
         bne     LDAC9                           ; DAA8 D0 1F                    ..
 LDAAA:  lda     $D209                           ; DAAA AD 09 D2                 ...
         cmp     #$11                            ; DAAD C9 11                    ..
         bne     LDAC9                           ; DAAF D0 18                    ..
         lda     $0302                           ; DAB1 AD 02 03                 ...
-        cmp     #$52                            ; DAB4 C9 52                    .R
+        cmp     #'R'
         beq     LDAC0                           ; DAB6 F0 08                    ..
-        cmp     #$53                            ; DAB8 C9 53                    .S
+        cmp     #'S'
         beq     LDAC0                           ; DABA F0 04                    ..
 LDABC:  lda     #$8B                            ; DABC A9 8B                    ..
         sec                                     ; DABE 38                       8
@@ -566,7 +401,7 @@ LDABC:  lda     #$8B                            ; DABC A9 8B                    
 
 ; ----------------------------------------------------------------------------
 LDAC0:  lda     #$02                            ; DAC0 A9 02                    ..
-        sta     $0301                           ; DAC2 8D 01 03                 ...
+        sta     DUNIT
 LDAC5:  lda     #$A0                            ; DAC5 A9 A0                    ..
         clc                                     ; DAC7 18                       .
         rts                                     ; DAC8 60                       `
@@ -606,14 +441,14 @@ LDAF9:  pla                                     ; DAF9 68                       
 
 ; ----------------------------------------------------------------------------
 LDB04:  lda     $0302                           ; DB04 AD 02 03                 ...
-        cmp     #$52                            ; DB07 C9 52                    .R
+        cmp     #'R'
         bne     LDB12                           ; DB09 D0 07                    ..
         ldy     #$00                            ; DB0B A0 00                    ..
         lda     #$08                            ; DB0D A9 08                    ..
         jmp     LDBDC                           ; DB0F 4C DC DB                 L..
 
 ; ----------------------------------------------------------------------------
-LDB12:  cmp     #$50                            ; DB12 C9 50                    .P
+LDB12:  cmp     #'P'
         bne     LDB25                           ; DB14 D0 0F                    ..
         jsr     LDE76                           ; DB16 20 76 DE                  v.
         bcc     LDB1E                           ; DB19 90 03                    ..
@@ -626,7 +461,7 @@ LDB1E:  ldy     #$FF                            ; DB1E A0 FF                    
         jmp     LDBDC                           ; DB22 4C DC DB                 L..
 
 ; ----------------------------------------------------------------------------
-LDB25:  cmp     #$57                            ; DB25 C9 57                    .W
+LDB25:  cmp     #'W'
         bne     LDB38                           ; DB27 D0 0F                    ..
         jsr     LDE76                           ; DB29 20 76 DE                  v.
         bcc     LDB31                           ; DB2C 90 03                    ..
@@ -645,7 +480,7 @@ LDB38:  cmp     #$53                            ; DB38 C9 53                    
         sta     $02EC                           ; DB3E 8D EC 02                 ...
         lda     #$FF                            ; DB41 A9 FF                    ..
         sta     $02EB                           ; DB43 8D EB 02                 ...
-        lda     $0301                           ; DB46 AD 01 03                 ...
+        lda     DUNIT
         cmp     #$01                            ; DB49 C9 01                    ..
         beq     LDB6C                           ; DB4B F0 1F                    ..
         lda     $D107                           ; DB4D AD 07 D1                 ...
@@ -654,7 +489,7 @@ LDB38:  cmp     #$53                            ; DB38 C9 53                    
         lsr     a                               ; DB53 4A                       J
         lsr     a                               ; DB54 4A                       J
         sta     $4A                             ; DB55 85 4A                    .J
-        lda     $0301                           ; DB57 AD 01 03                 ...
+        lda     DUNIT
         lsr     a                               ; DB5A 4A                       J
         bcs     LDB66                           ; DB5B B0 09                    ..
         jsr     LDED1                           ; DB5D 20 D1 DE                  ..
@@ -672,7 +507,7 @@ LDB73:  sta     $02EA                           ; DB73 8D EA 02                 
         rts                                     ; DB78 60                       `
 
 ; ----------------------------------------------------------------------------
-LDB79:  cmp     #$21                            ; DB79 C9 21                    .!
+LDB79:  cmp     #'!'
         bne     LDB9E                           ; DB7B D0 21                    .!
         jsr     LDE76                           ; DB7D 20 76 DE                  v.
         bcc     LDB85                           ; DB80 90 03                    ..
@@ -696,7 +531,7 @@ LDB85:  lda     $0309                           ; DB85 AD 09 03                 
         rts                                     ; DB9D 60                       `
 
 ; ----------------------------------------------------------------------------
-LDB9E:  cmp     #$22                            ; DB9E C9 22                    ."
+LDB9E:  cmp     #'"'
         bne     LDBB7                           ; DBA0 D0 15                    ..
         jsr     LDE76                           ; DBA2 20 76 DE                  v.
         bcc     LDBAA                           ; DBA5 90 03                    ..
@@ -712,9 +547,9 @@ LDBAA:  lda     $D107                           ; DBAA AD 07 D1                 
         rts                                     ; DBB6 60                       `
 
 ; ----------------------------------------------------------------------------
-LDBB7:  cmp     #$4E                            ; DBB7 C9 4E                    .N
+LDBB7:  cmp     #'N'
         bne     LDBC7                           ; DBB9 D0 0C                    ..
-        ldy     $0301                           ; DBBB AC 01 03                 ...
+        ldy     DUNIT
         dey                                     ; DBBE 88                       .
         beq     LDBC4                           ; DBBF F0 03                    ..
         jmp     LDE3E                           ; DBC1 4C 3E DE                 L>.
@@ -723,12 +558,12 @@ LDBB7:  cmp     #$4E                            ; DBB7 C9 4E                    
 LDBC4:  jmp     LDE16                           ; DBC4 4C 16 DE                 L..
 
 ; ----------------------------------------------------------------------------
-LDBC7:  cmp     #$4F                            ; DBC7 C9 4F                    .O
+LDBC7:  cmp     #'O'
         bne     LDBD9                           ; DBC9 D0 0E                    ..
-        ldy     $0301                           ; DBCB AC 01 03                 ...
+        ldy     DUNIT
         dey                                     ; DBCE 88                       .
         beq     LDBD6                           ; DBCF F0 05                    ..
-        lda     #$8B                            ; DBD1 A9 8B                    ..
+        lda     #$8B                            ; NAK
         rts                                     ; DBD3 60                       `
 
 ; ----------------------------------------------------------------------------
@@ -736,18 +571,18 @@ LDBC7:  cmp     #$4F                            ; DBC7 C9 4F                    
 LDBD6:  jmp     LDDE5                           ; DBD6 4C E5 DD                 L..
 
 ; ----------------------------------------------------------------------------
-LDBD9:  lda     #$8B                            ; DBD9 A9 8B                    ..
+LDBD9:  lda     #$8B                            ; NAK
         rts                                     ; DBDB 60                       `
 
 ; ----------------------------------------------------------------------------
 LDBDC:  pha                                     ; DBDC 48                       H
-        lda     $0304                           ; DBDD AD 04 03                 ...
+        lda     DBUF
         sta     $F9                             ; DBE0 85 F9                    ..
-        lda     $0305                           ; DBE2 AD 05 03                 ...
+        lda     DBUF+1
         sta     $FA                             ; DBE5 85 FA                    ..
-        lda     $0308                           ; DBE7 AD 08 03                 ...
+        lda     DBYT
         sta     $F2                             ; DBEA 85 F2                    ..
-        lda     $0301                           ; DBEC AD 01 03                 ...
+        lda     DUNIT
         and     #$01                            ; DBEF 29 01                    ).
         eor     #$01                            ; DBF1 49 01                    I.
         sta     $4A                             ; DBF3 85 4A                    .J
@@ -757,7 +592,7 @@ LDBDC:  pha                                     ; DBDC 48                       
         asl     a                               ; DBF8 0A                       .
         asl     a                               ; DBF9 0A                       .
         sta     $E5                             ; DBFA 85 E5                    ..
-        lda     $0301                           ; DBFC AD 01 03                 ...
+        lda     DUNIT
         lsr     a                               ; DBFF 4A                       J
         bcs     LDC0F                           ; DC00 B0 0D                    ..
         ldx     $030A                           ; DC02 AE 0A 03                 ...
@@ -804,12 +639,12 @@ LDC4A:  lda     #$01                            ; DC4A A9 01                    
         jmp     LDC9B                           ; DC51 4C 9B DC                 L..
 
 ; ----------------------------------------------------------------------------
-LDC54:  lda     $D100                           ; DC54 AD 00 D1                 ...
+LDC54:  lda     HW0
         pha                                     ; DC57 48                       H
         and     #$FB                            ; DC58 29 FB                    ).
-        sta     $D100                           ; DC5A 8D 00 D1                 ...
+        sta     HW0
         pla                                     ; DC5D 68                       h
-        sta     $D100                           ; DC5E 8D 00 D1                 ...
+        sta     HW0
         lda     #$00                            ; DC61 A9 00                    ..
         sta     $E5                             ; DC63 85 E5                    ..
         sta     $E6                             ; DC65 85 E6                    ..
@@ -860,7 +695,7 @@ LDCB2:  lda     #$F9                            ; DCB2 A9 F9                    
         sta     $D10C                           ; DCB4 8D 0C D1                 ...
         jsr     LDD33                           ; DCB7 20 33 DD                  3.
         jsr     LDD49                           ; DCBA 20 49 DD                  I.
-        lda     $D100                           ; DCBD AD 00 D1                 ...
+        lda     HW0
         and     #$10                            ; DCC0 29 10                    ).
         beq     LDCE2                           ; DCC2 F0 1E                    ..
         ldy     $F5                             ; DCC4 A4 F5                    ..
@@ -874,7 +709,7 @@ LDCCD:  jsr     LDCFC                           ; DCCD 20 FC DC                 
 
 ; ----------------------------------------------------------------------------
 LDCD5:  jsr     LDD49                           ; DCD5 20 49 DD                  I.
-        lda     $D100                           ; DCD8 AD 00 D1                 ...
+        lda     HW0
         and     #$10                            ; DCDB 29 10                    ).
         beq     LDCE2                           ; DCDD F0 03                    ..
         lda     #$A3                            ; DCDF A9 A3                    ..
@@ -942,23 +777,25 @@ LDD37:  lda     $E4,y                           ; DD37 B9 E4 00                 
         jmp     LDDD2                           ; DD46 4C D2 DD                 L..
 
 ; ----------------------------------------------------------------------------
-LDD49:  lda     $D100                           ; DD49 AD 00 D1                 ...
+; wait for bit 5
+LDD49:  lda     HW0
         and     #$20                            ; DD4C 29 20                    ) 
         bne     LDD49                           ; DD4E D0 F9                    ..
         rts                                     ; DD50 60                       `
 
 ; ----------------------------------------------------------------------------
-LDD51:  ldx     #$00                            ; DD51 A2 00                    ..
-        ldy     #$00                            ; DD53 A0 00                    ..
-LDD55:  lda     $D100                           ; DD55 AD 00 D1                 ...
-        and     #$20                            ; DD58 29 20                    ) 
-        beq     LDD64                           ; DD5A F0 08                    ..
-        dex                                     ; DD5C CA                       .
-        bne     LDD55                           ; DD5D D0 F6                    ..
-        dey                                     ; DD5F 88                       .
-        bne     LDD55                           ; DD60 D0 F3                    ..
-        lda     #$8A                            ; DD62 A9 8A                    ..
-LDD64:  rts                                     ; DD64 60                       `
+; wait for bit 5 with timeout
+LDD51:  ldx     #$00
+        ldy     #$00
+:	lda     HW0
+        and     #$20
+        beq     :+
+        dex
+        bne     :-
+        dey
+        bne     :-
+        lda     #$8A                            ; timeout
+:	rts
 
 ; ----------------------------------------------------------------------------
 LDD65:  ldx     #$0D                            ; DD65 A2 0D                    ..
@@ -1026,7 +863,7 @@ LDDD2:  lda     #$00                            ; DDD2 A9 00                    
         rts                                     ; DDD7 60                       `
 
 ; ----------------------------------------------------------------------------
-LDDD8:  lda     $D100                           ; DDD8 AD 00 D1                 ...
+LDDD8:  lda     HW0
         and     #$01                            ; DDDB 29 01                    ).
         beq     LDDD8                           ; DDDD F0 F9                    ..
         lda     #$FF                            ; DDDF A9 FF                    ..
@@ -1034,9 +871,9 @@ LDDD8:  lda     $D100                           ; DDD8 AD 00 D1                 
         rts                                     ; DDE4 60                       `
 
 ; ----------------------------------------------------------------------------
-LDDE5:  lda     $0304                           ; DDE5 AD 04 03                 ...
+LDDE5:  lda     DBUF
         sta     $F9                             ; DDE8 85 F9                    ..
-        lda     $0305                           ; DDEA AD 05 03                 ...
+        lda     DBUF+1
         sta     $FA                             ; DDED 85 FA                    ..
         ldy     #$07                            ; DDEF A0 07                    ..
         lda     ($F9),y                         ; DDF1 B1 F9                    ..
@@ -1061,9 +898,9 @@ LDE04:  lda     $D107                           ; DE04 AD 07 D1                 
         rts                                     ; DE15 60                       `
 
 ; ----------------------------------------------------------------------------
-LDE16:  lda     $0304                           ; DE16 AD 04 03                 ...
+LDE16:  lda     DBUF
         sta     $F9                             ; DE19 85 F9                    ..
-        lda     $0305                           ; DE1B AD 05 03                 ...
+        lda     DBUF+1
         sta     $FA                             ; DE1E 85 FA                    ..
         lda     $D107                           ; DE20 AD 07 D1                 ...
         and     #$A0                            ; DE23 29 A0                    ).
@@ -1084,9 +921,9 @@ LDE30:  lda     LD9A3,x                         ; DE30 BD A3 D9                 
         rts                                     ; DE3D 60                       `
 
 ; ----------------------------------------------------------------------------
-LDE3E:  lda     $0304                           ; DE3E AD 04 03                 ...
+LDE3E:  lda     DBUF
         sta     $F9                             ; DE41 85 F9                    ..
-        lda     $0305                           ; DE43 AD 05 03                 ...
+        lda     DBUF+1
         sta     $FA                             ; DE46 85 FA                    ..
         lda     $D107                           ; DE48 AD 07 D1                 ...
         and     #$07                            ; DE4B 29 07                    ).
@@ -1096,7 +933,7 @@ LDE3E:  lda     $0304                           ; DE3E AD 04 03                 
         asl     a                               ; DE50 0A                       .
         tax                                     ; DE51 AA                       .
         ldy     #$00                            ; DE52 A0 00                    ..
-        lda     $0301                           ; DE54 AD 01 03                 ...
+        lda     DUNIT
         lsr     a                               ; DE57 4A                       J
         bcc     LDE68                           ; DE58 90 0E                    ..
 LDE5A:  lda     LD8A3,x                         ; DE5A BD A3 D8                 ...
@@ -1119,7 +956,7 @@ LDE68:  lda     LD923,x                         ; DE68 BD 23 D9                 
         rts                                     ; DE75 60                       `
 
 ; ----------------------------------------------------------------------------
-LDE76:  lda     $0301                           ; DE76 AD 01 03                 ...
+LDE76:  lda     DUNIT
         cmp     #$01                            ; DE79 C9 01                    ..
         beq     LDE87                           ; DE7B F0 0A                    ..
         lda     $D107                           ; DE7D AD 07 D1                 ...
@@ -1140,7 +977,7 @@ LDE8A:  lsr     a                               ; DE8A 4A                       
         rts                                     ; DE8E 60                       `
 
 ; ----------------------------------------------------------------------------
-LDE8F:  lda     $D100                           ; DE8F AD 00 D1                 ...
+LDE8F:  lda     HW0
         and     #$08                            ; DE92 29 08                    ).
         bne     LDE99                           ; DE94 D0 03                    ..
         lda     #$A3                            ; DE96 A9 A3                    ..
@@ -1150,14 +987,14 @@ LDE8F:  lda     $D100                           ; DE8F AD 00 D1                 
 LDE99:  lda     #$FE                            ; DE99 A9 FE                    ..
         sta     $D101                           ; DE9B 8D 01 D1                 ...
         jsr     LDDD8                           ; DE9E 20 D8 DD                  ..
-        lda     $D100                           ; DEA1 AD 00 D1                 ...
+        lda     HW0
         pha                                     ; DEA4 48                       H
         and     #$FD                            ; DEA5 29 FD                    ).
-        sta     $D100                           ; DEA7 8D 00 D1                 ...
+        sta     HW0
         ldx     #$FF                            ; DEAA A2 FF                    ..
         pla                                     ; DEAC 68                       h
-        sta     $D100                           ; DEAD 8D 00 D1                 ...
-LDEB0:  lda     $D100                           ; DEB0 AD 00 D1                 ...
+        sta     HW0
+LDEB0:  lda     HW0
         and     #$08                            ; DEB3 29 08                    ).
         beq     LDEC0                           ; DEB5 F0 09                    ..
         dex                                     ; DEB7 CA                       .
@@ -1172,7 +1009,7 @@ LDEC0:  jsr     LDD51                           ; DEC0 20 51 DD                 
         rts                                     ; DEC5 60                       `
 
 ; ----------------------------------------------------------------------------
-LDEC6:  lda     $D100                           ; DEC6 AD 00 D1                 ...
+LDEC6:  lda     HW0
         and     #$10                            ; DEC9 29 10                    ).
         bne     LDECE                           ; DECB D0 01                    ..
         rts                                     ; DECD 60                       `
@@ -1213,250 +1050,6 @@ LDEE0:  lda     LD89D,y                         ; DEE0 B9 9D D8                 
         rts                                     ; DF08 60                       `
 
 ; ----------------------------------------------------------------------------
-        .byte   $FF                             ; DF09 FF                       .
-        .byte   $FF                             ; DF0A FF                       .
-        .byte   $FF                             ; DF0B FF                       .
-        .byte   $FF                             ; DF0C FF                       .
-        .byte   $FF                             ; DF0D FF                       .
-        .byte   $FF                             ; DF0E FF                       .
-        .byte   $FF                             ; DF0F FF                       .
-        .byte   $FF                             ; DF10 FF                       .
-        .byte   $FF                             ; DF11 FF                       .
-        .byte   $FF                             ; DF12 FF                       .
-        .byte   $FF                             ; DF13 FF                       .
-        .byte   $FF                             ; DF14 FF                       .
-        .byte   $FF                             ; DF15 FF                       .
-        .byte   $FF                             ; DF16 FF                       .
-        .byte   $FF                             ; DF17 FF                       .
-        .byte   $FF                             ; DF18 FF                       .
-        .byte   $FF                             ; DF19 FF                       .
-        .byte   $FF                             ; DF1A FF                       .
-        .byte   $FF                             ; DF1B FF                       .
-        .byte   $FF                             ; DF1C FF                       .
-        .byte   $FF                             ; DF1D FF                       .
-        .byte   $FF                             ; DF1E FF                       .
-        .byte   $FF                             ; DF1F FF                       .
-        .byte   $FF                             ; DF20 FF                       .
-        .byte   $FF                             ; DF21 FF                       .
-        .byte   $FF                             ; DF22 FF                       .
-        .byte   $FF                             ; DF23 FF                       .
-        .byte   $FF                             ; DF24 FF                       .
-        .byte   $FF                             ; DF25 FF                       .
-        .byte   $FF                             ; DF26 FF                       .
-        .byte   $FF                             ; DF27 FF                       .
-        .byte   $FF                             ; DF28 FF                       .
-        .byte   $FF                             ; DF29 FF                       .
-        .byte   $FF                             ; DF2A FF                       .
-        .byte   $FF                             ; DF2B FF                       .
-        .byte   $FF                             ; DF2C FF                       .
-        .byte   $FF                             ; DF2D FF                       .
-        .byte   $FF                             ; DF2E FF                       .
-        .byte   $FF                             ; DF2F FF                       .
-        .byte   $FF                             ; DF30 FF                       .
-        .byte   $FF                             ; DF31 FF                       .
-        .byte   $FF                             ; DF32 FF                       .
-        .byte   $FF                             ; DF33 FF                       .
-        .byte   $FF                             ; DF34 FF                       .
-        .byte   $FF                             ; DF35 FF                       .
-        .byte   $FF                             ; DF36 FF                       .
-        .byte   $FF                             ; DF37 FF                       .
-        .byte   $FF                             ; DF38 FF                       .
-        .byte   $FF                             ; DF39 FF                       .
-        .byte   $FF                             ; DF3A FF                       .
-        .byte   $FF                             ; DF3B FF                       .
-        .byte   $FF                             ; DF3C FF                       .
-        .byte   $FF                             ; DF3D FF                       .
-        .byte   $FF                             ; DF3E FF                       .
-        .byte   $FF                             ; DF3F FF                       .
-        .byte   $FF                             ; DF40 FF                       .
-        .byte   $FF                             ; DF41 FF                       .
-        .byte   $FF                             ; DF42 FF                       .
-        .byte   $FF                             ; DF43 FF                       .
-        .byte   $FF                             ; DF44 FF                       .
-        .byte   $FF                             ; DF45 FF                       .
-        .byte   $FF                             ; DF46 FF                       .
-        .byte   $FF                             ; DF47 FF                       .
-        .byte   $FF                             ; DF48 FF                       .
-        .byte   $FF                             ; DF49 FF                       .
-        .byte   $FF                             ; DF4A FF                       .
-        .byte   $FF                             ; DF4B FF                       .
-        .byte   $FF                             ; DF4C FF                       .
-        .byte   $FF                             ; DF4D FF                       .
-        .byte   $FF                             ; DF4E FF                       .
-        .byte   $FF                             ; DF4F FF                       .
-        .byte   $FF                             ; DF50 FF                       .
-        .byte   $FF                             ; DF51 FF                       .
-        .byte   $FF                             ; DF52 FF                       .
-        .byte   $FF                             ; DF53 FF                       .
-        .byte   $FF                             ; DF54 FF                       .
-        .byte   $FF                             ; DF55 FF                       .
-        .byte   $FF                             ; DF56 FF                       .
-        .byte   $FF                             ; DF57 FF                       .
-        .byte   $FF                             ; DF58 FF                       .
-        .byte   $FF                             ; DF59 FF                       .
-        .byte   $FF                             ; DF5A FF                       .
-        .byte   $FF                             ; DF5B FF                       .
-        .byte   $FF                             ; DF5C FF                       .
-        .byte   $FF                             ; DF5D FF                       .
-        .byte   $FF                             ; DF5E FF                       .
-        .byte   $FF                             ; DF5F FF                       .
-        .byte   $FF                             ; DF60 FF                       .
-        .byte   $FF                             ; DF61 FF                       .
-        .byte   $FF                             ; DF62 FF                       .
-        .byte   $FF                             ; DF63 FF                       .
-        .byte   $FF                             ; DF64 FF                       .
-        .byte   $FF                             ; DF65 FF                       .
-        .byte   $FF                             ; DF66 FF                       .
-        .byte   $FF                             ; DF67 FF                       .
-        .byte   $FF                             ; DF68 FF                       .
-        .byte   $FF                             ; DF69 FF                       .
-        .byte   $FF                             ; DF6A FF                       .
-        .byte   $FF                             ; DF6B FF                       .
-        .byte   $FF                             ; DF6C FF                       .
-        .byte   $FF                             ; DF6D FF                       .
-        .byte   $FF                             ; DF6E FF                       .
-        .byte   $FF                             ; DF6F FF                       .
-        .byte   $FF                             ; DF70 FF                       .
-        .byte   $FF                             ; DF71 FF                       .
-        .byte   $FF                             ; DF72 FF                       .
-        .byte   $FF                             ; DF73 FF                       .
-        .byte   $FF                             ; DF74 FF                       .
-        .byte   $FF                             ; DF75 FF                       .
-        .byte   $FF                             ; DF76 FF                       .
-        .byte   $FF                             ; DF77 FF                       .
-        .byte   $FF                             ; DF78 FF                       .
-        .byte   $FF                             ; DF79 FF                       .
-        .byte   $FF                             ; DF7A FF                       .
-        .byte   $FF                             ; DF7B FF                       .
-        .byte   $FF                             ; DF7C FF                       .
-        .byte   $FF                             ; DF7D FF                       .
-        .byte   $FF                             ; DF7E FF                       .
-        .byte   $FF                             ; DF7F FF                       .
-        .byte   $FF                             ; DF80 FF                       .
-        .byte   $FF                             ; DF81 FF                       .
-        .byte   $FF                             ; DF82 FF                       .
-        .byte   $FF                             ; DF83 FF                       .
-        .byte   $FF                             ; DF84 FF                       .
-        .byte   $FF                             ; DF85 FF                       .
-        .byte   $FF                             ; DF86 FF                       .
-        .byte   $FF                             ; DF87 FF                       .
-        .byte   $FF                             ; DF88 FF                       .
-        .byte   $FF                             ; DF89 FF                       .
-        .byte   $FF                             ; DF8A FF                       .
-        .byte   $FF                             ; DF8B FF                       .
-        .byte   $FF                             ; DF8C FF                       .
-        .byte   $FF                             ; DF8D FF                       .
-        .byte   $FF                             ; DF8E FF                       .
-        .byte   $FF                             ; DF8F FF                       .
-        .byte   $FF                             ; DF90 FF                       .
-        .byte   $FF                             ; DF91 FF                       .
-        .byte   $FF                             ; DF92 FF                       .
-        .byte   $FF                             ; DF93 FF                       .
-        .byte   $FF                             ; DF94 FF                       .
-        .byte   $FF                             ; DF95 FF                       .
-        .byte   $FF                             ; DF96 FF                       .
-        .byte   $FF                             ; DF97 FF                       .
-        .byte   $FF                             ; DF98 FF                       .
-        .byte   $FF                             ; DF99 FF                       .
-        .byte   $FF                             ; DF9A FF                       .
-        .byte   $FF                             ; DF9B FF                       .
-        .byte   $FF                             ; DF9C FF                       .
-        .byte   $FF                             ; DF9D FF                       .
-        .byte   $FF                             ; DF9E FF                       .
-        .byte   $FF                             ; DF9F FF                       .
-        .byte   $FF                             ; DFA0 FF                       .
-        .byte   $FF                             ; DFA1 FF                       .
-        .byte   $FF                             ; DFA2 FF                       .
-        .byte   $FF                             ; DFA3 FF                       .
-        .byte   $FF                             ; DFA4 FF                       .
-        .byte   $FF                             ; DFA5 FF                       .
-        .byte   $FF                             ; DFA6 FF                       .
-        .byte   $FF                             ; DFA7 FF                       .
-        .byte   $FF                             ; DFA8 FF                       .
-        .byte   $FF                             ; DFA9 FF                       .
-        .byte   $FF                             ; DFAA FF                       .
-        .byte   $FF                             ; DFAB FF                       .
-        .byte   $FF                             ; DFAC FF                       .
-        .byte   $FF                             ; DFAD FF                       .
-        .byte   $FF                             ; DFAE FF                       .
-        .byte   $FF                             ; DFAF FF                       .
-        .byte   $FF                             ; DFB0 FF                       .
-        .byte   $FF                             ; DFB1 FF                       .
-        .byte   $FF                             ; DFB2 FF                       .
-        .byte   $FF                             ; DFB3 FF                       .
-        .byte   $FF                             ; DFB4 FF                       .
-        .byte   $FF                             ; DFB5 FF                       .
-        .byte   $FF                             ; DFB6 FF                       .
-        .byte   $FF                             ; DFB7 FF                       .
-        .byte   $FF                             ; DFB8 FF                       .
-        .byte   $FF                             ; DFB9 FF                       .
-        .byte   $FF                             ; DFBA FF                       .
-        .byte   $FF                             ; DFBB FF                       .
-        .byte   $FF                             ; DFBC FF                       .
-        .byte   $FF                             ; DFBD FF                       .
-        .byte   $FF                             ; DFBE FF                       .
-        .byte   $FF                             ; DFBF FF                       .
-        .byte   $FF                             ; DFC0 FF                       .
-        .byte   $FF                             ; DFC1 FF                       .
-        .byte   $FF                             ; DFC2 FF                       .
-        .byte   $FF                             ; DFC3 FF                       .
-        .byte   $FF                             ; DFC4 FF                       .
-        .byte   $FF                             ; DFC5 FF                       .
-        .byte   $FF                             ; DFC6 FF                       .
-        .byte   $FF                             ; DFC7 FF                       .
-        .byte   $FF                             ; DFC8 FF                       .
-        .byte   $FF                             ; DFC9 FF                       .
-        .byte   $FF                             ; DFCA FF                       .
-        .byte   $FF                             ; DFCB FF                       .
-        .byte   $FF                             ; DFCC FF                       .
-        .byte   $FF                             ; DFCD FF                       .
-        .byte   $FF                             ; DFCE FF                       .
-        .byte   $FF                             ; DFCF FF                       .
-        .byte   $FF                             ; DFD0 FF                       .
-        .byte   $FF                             ; DFD1 FF                       .
-        .byte   $FF                             ; DFD2 FF                       .
-        .byte   $FF                             ; DFD3 FF                       .
-        .byte   $FF                             ; DFD4 FF                       .
-        .byte   $FF                             ; DFD5 FF                       .
-        .byte   $FF                             ; DFD6 FF                       .
-        .byte   $FF                             ; DFD7 FF                       .
-        .byte   $FF                             ; DFD8 FF                       .
-        .byte   $FF                             ; DFD9 FF                       .
-        .byte   $FF                             ; DFDA FF                       .
-        .byte   $FF                             ; DFDB FF                       .
-        .byte   $FF                             ; DFDC FF                       .
-        .byte   $FF                             ; DFDD FF                       .
-        .byte   $FF                             ; DFDE FF                       .
-        .byte   $FF                             ; DFDF FF                       .
-        .byte   $FF                             ; DFE0 FF                       .
-        .byte   $FF                             ; DFE1 FF                       .
-        .byte   $FF                             ; DFE2 FF                       .
-        .byte   $FF                             ; DFE3 FF                       .
-        .byte   $FF                             ; DFE4 FF                       .
-        .byte   $FF                             ; DFE5 FF                       .
-        .byte   $FF                             ; DFE6 FF                       .
-        .byte   $FF                             ; DFE7 FF                       .
-        .byte   $FF                             ; DFE8 FF                       .
-        .byte   $FF                             ; DFE9 FF                       .
-        .byte   $FF                             ; DFEA FF                       .
-        .byte   $FF                             ; DFEB FF                       .
-        .byte   $FF                             ; DFEC FF                       .
-        .byte   $FF                             ; DFED FF                       .
-        .byte   $FF                             ; DFEE FF                       .
-        .byte   $FF                             ; DFEF FF                       .
-        .byte   $FF                             ; DFF0 FF                       .
-        .byte   $FF                             ; DFF1 FF                       .
-        .byte   $FF                             ; DFF2 FF                       .
-        .byte   $FF                             ; DFF3 FF                       .
-        .byte   $FF                             ; DFF4 FF                       .
-        .byte   $FF                             ; DFF5 FF                       .
-        .byte   $FF                             ; DFF6 FF                       .
-        .byte   $FF                             ; DFF7 FF                       .
-        .byte   $FF                             ; DFF8 FF                       .
-        .byte   $FF                             ; DFF9 FF                       .
-        .byte   $FF                             ; DFFA FF                       .
-        .byte   $FF                             ; DFFB FF                       .
-        .byte   $FF                             ; DFFC FF                       .
-        .byte   $FF                             ; DFFD FF                       .
-        .byte   $FF                             ; DFFE FF                       .
-        .byte   $FF                             ; DFFF FF                       .
+
+	.res	247, $FF
+
